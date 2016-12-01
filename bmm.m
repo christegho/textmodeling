@@ -1,8 +1,8 @@
-function sk_wordIter = bmm(K,iterations,sn)
+function perplexity = bmm(K,iterations,sn)
 % Bayesian Mixture of Multinomials applied to the KOS dataset
 
 % ADVICE: consider doing clear, close all
-rand('seed',sn);
+randn('seed',sn);
 load kos_doc_data.mat
 
 W = max([A(:,2); B(:,2)]);  % number of unique words
@@ -47,7 +47,7 @@ for iter = 1:iterations     % number of Gibbs sweeps
     sk_words(kk) = sk_words(kk) + sum(c);       % add back document counts
     sd(d) = kk;
   end
-  sk_wordIter(:,iter) = sk_words/sum(sk_words);
+  sk_wordIter(:,iter) = (sk_docs+alpha)./sum(sk_docs+alpha);
   [perplexity, lp] = computePerplexity(B,W,gamma,alpha,sk_words,sk_docs,K,swk);
   perpIter(iter) = perplexity;
   lpIter(iter) = lp;
@@ -73,17 +73,8 @@ for k=1:K, [i ii] = sort(-swk(:,k)); ZZ(k,:)=ii(1:I); end
 for i=1:I, for k=1:K, fprintf('%-15s',V{ZZ(k,i)}); end; fprintf('\n'); end
 
 figure;
-hist(sk_words');
+plot(sk_wordIter');
 title(sn);
 xlabel('iterations')
 ylabel('mixing proportions')
-figure;
-plot(perpIter);
-title(sn);
-xlabel('iterations')
-ylabel('perplexity')
-figure;
-plot(lpIter);
-title(sn);
-xlabel('iterations')
-ylabel('logP')
+

@@ -1,8 +1,8 @@
-function perplexity = lda(K, iterations)
+function perplexity = lda(K, iterations,sn)
 %K = 20;
 %iterations = 10;
 % Latent Dirichlet Allocation applied to the KOS dataset
-rand('seed',27); % set the pseudo-random number generator seed
+rand('seed',sn); % set the pseudo-random number generator seed
 
 % ADVICE: consider doing clear, close all
 
@@ -63,7 +63,9 @@ for iter = 1:iterations    % This can take a couple of minutes to run
     end
     s{d} = sparse(z);   % store back into sparse structure
   end
-  SkdIterations(:,iter) = sk / sum(sk);
+  SkdIterations(:,iter) = (sum(skd,2)+alpha) ./ sum((sum(skd,2)+alpha)) ;
+  PPA(iter)=computePerplexityLDA(A,Swd,K,swk,sk,alpha, gamma, W,iterations);
+  PPB(iter)=computePerplexityLDA(B,Swd,K,swk,sk,alpha, gamma, W,iterations);
 end
 
 % compute the perplexity for all words in the test set B
@@ -114,3 +116,17 @@ figure
 plot(SkdIterations')
 xlabel('iterations')
 ylabel('topic posteriors')
+title(sn);
+
+figure
+plot(PPA)
+xlabel('iterations')
+ylabel('perplexity of set A')
+title(sn)
+
+
+figure
+plot(PPB)
+xlabel('iterations')
+ylabel('perplexity of set B')
+title(sn)

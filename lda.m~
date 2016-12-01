@@ -1,7 +1,8 @@
-function perplexity = lda(K, iterations)
+function perplexity = lda(K, iterations,sn)
 %K = 20;
 %iterations = 10;
 % Latent Dirichlet Allocation applied to the KOS dataset
+rand('seed',sn); % set the pseudo-random number generator seed
 
 % ADVICE: consider doing clear, close all
 
@@ -62,7 +63,7 @@ for iter = 1:iterations    % This can take a couple of minutes to run
     end
     s{d} = sparse(z);   % store back into sparse structure
   end
-  %SkdIterations(:,iter) = sk / sum(sk);
+  SkdIterations(:,iter) = (skd+alpha)sum(skd+alpha,2);
 end
 
 % compute the perplexity for all words in the test set B
@@ -80,7 +81,7 @@ for d = unique(B(:,1))'  % loop over all documents in B
   Skd = sum(z,1)';
   Sk = sk + Skd;  
   % perform some iterations of Gibbs sampling for test document d
-  for iter = 1:10
+  for iter = 1:iterations
     for w = B(B(:,1)==d,2)' % w are the words in doc d
       a = z(w,:); % number of times word w is assigned to each topic in doc d
       ka = find(a); % topics with non-zero counts for word d in document d
@@ -112,4 +113,5 @@ for i=1:I, for k=1:K, fprintf('%-15s',V{ZZ(k,i)}); end; fprintf('\n'); end
 figure
 plot(SkdIterations')
 xlabel('iterations')
-ylabel('mixing proportions')
+ylabel('topic posteriors')
+title(sn);
