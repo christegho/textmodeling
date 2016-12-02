@@ -14,7 +14,7 @@ for d = unique(B(:,1))'  % loop over all documents in B
   Skd = sum(z,1)';
   Sk = sk + Skd;  
   % perform some iterations of Gibbs sampling for test document d
-  for iter = 1:iterations
+  for iter = 1:2
     for w = B(B(:,1)==d,2)' % w are the words in doc d
       a = z(w,:); % number of times word w is assigned to each topic in doc d
       ka = find(a); % topics with non-zero counts for word d in document d

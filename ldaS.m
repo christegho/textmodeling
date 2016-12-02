@@ -1,6 +1,6 @@
-function perplexity = lda(K, iterations,sn)
-%K = 20;
-%iterations = 10;
+K = 20;
+iterations = 10;
+sn=28;
 % Latent Dirichlet Allocation applied to the KOS dataset
 rand('seed',sn); % set the pseudo-random number generator seed
 
@@ -64,6 +64,12 @@ for iter = 1:iterations    % This can take a couple of minutes to run
     s{d} = sparse(z);   % store back into sparse structure
   end
   SkdIterations(:,iter) = (sum(skd,2)+alpha) ./ sum((sum(skd,2)+alpha)) ;
+  for pki = 1:20
+    pxi(:,pki)= swk(:,pki) / sum(swk(:,pki)) ;
+  end
+    logpxi = log(pxi);
+    logpxi(isinf(logpxi)) = 0;
+   entropy(:,iter)= sum(-pxi.*logpxi);
   SkdIt5(:,iter) = skd(:,5) ./ sum(skd(:,5)) ;
   SkdIt200(:,iter) = skd(:,200) ./ sum(skd(:,200)) ;
   SkdIt210(:,iter) = skd(:,210) ./ sum(skd(:,210)) ;
@@ -115,35 +121,4 @@ for k=1:K, [i ii] = sort(-swk(:,k)); ZZ(k,:)=ii(1:I); end
 for i=1:I, for k=1:K, fprintf('%-15s',V{ZZ(k,i)}); end; fprintf('\n'); end
 
 
-figure
-plot(SkdIterations')
-xlabel('iterations')
-ylabel('topic posteriors')
-title(sn);
 
-
-figure
-plot(PPB)
-xlabel('iterations')
-ylabel('perplexity of set B')
-title(sn)
-
-plot(SkdIt5)
-xlabel('iterations')
-ylabel('Mixing Pr')
-title(sn)
-
-plot(PPB)
-xlabel('iterations')
-ylabel('perplexity of set B')
-title(sn)
-
-plot(PPB)
-xlabel('iterations')
-ylabel('perplexity of set B')
-title(sn)
-
-figure
-  SkdIt5(:,iter) = skd(:,5) ./ sum(skd(:,5)) ;
-  SkdIt200(:,iter) = skd(:,200) ./ sum(skd(:,200)) ;
-  SkdIt210(:,iter) = skd(:,210) ./ sum(skd(:,210)) ;

@@ -64,6 +64,9 @@ for iter = 1:iterations    % This can take a couple of minutes to run
     s{d} = sparse(z);   % store back into sparse structure
   end
   SkdIterations(:,iter) = (sum(skd,2)+alpha) ./ sum((sum(skd,2)+alpha)) ;
+  SkdIt5(:,iter) = skd(:,5) ./ sum(skd(:,5)) ;
+  SkdIt200(:,iter) = skd(:,200) ./ sum(skd(:,200)) ;
+  SkdIt210(:,iter) = skd(:,210) ./ sum(skd(:,210)) ;
   PPA(iter)=computePerplexityLDA(A,Swd,K,swk,sk,alpha, gamma, W,iterations);
   PPB(iter)=computePerplexityLDA(B,Swd,K,swk,sk,alpha, gamma, W,iterations);
 end
@@ -118,15 +121,27 @@ xlabel('iterations')
 ylabel('topic posteriors')
 title(sn);
 
-figure
-plot(PPA)
-xlabel('iterations')
-ylabel('perplexity of set A')
-title(sn)
-
 
 figure
 plot(PPB)
 xlabel('iterations')
 ylabel('perplexity of set B')
+title(sn)
+
+figure
+plot(SkdIt5')
+xlabel('iterations')
+ylabel('Topic Distributions for Doc 5')
+title(sn)
+
+figure
+plot(SkdIt200')
+xlabel('iterations')
+ylabel('Topic Distributions for Doc 200')
+title(sn)
+
+figure
+plot(SkdIt210')
+xlabel('iterations')
+ylabel('Topic Distributions for Doc 210')
 title(sn)
